@@ -5,114 +5,86 @@
  * @format
  */
 
+import Rive from 'rive-react-native';
 import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import {Button, SafeAreaView, Text, View} from 'react-native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {NavigationContainer, useNavigation} from '@react-navigation/native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+function OtherScreen(): React.JSX.Element {
+  const navigation = useNavigation();
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
+    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+      <Text>Other Nested Stack</Text>
+      <Button onPress={() => navigation.goBack()} title="3. Go back" />
     </View>
   );
 }
 
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
+const OtherStack = createNativeStackNavigator();
+function OtherNestedSTack(): React.JSX.Element {
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    <OtherStack.Navigator>
+      <Stack.Screen name="Other" component={OtherScreen} />
+    </OtherStack.Navigator>
   );
 }
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
+function HomeScreen(): React.JSX.Element {
+  const navigation = useNavigation();
+  return (
+    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+      <Text>Home Screen</Text>
+      <Button
+        onPress={() => navigation.navigate('RiveNestedStack', {screen: 'Rive'})}
+        title="1. Navigate to nested rive"
+      />
+    </View>
+  );
+}
+
+function RiveScreen(): React.JSX.Element {
+  const navigation = useNavigation();
+  return (
+    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+      <Rive
+        url="https://public.rive.app/community/runtime-files/2195-4346-avatar-pack-use-case.riv"
+        artboardName="Avatar 1"
+        stateMachineName="avatar"
+        style={{width: 400, height: 400}}
+      />
+      <Button
+        onPress={() =>
+          navigation.navigate('OtherNestedStack', {screen: 'Other'})
+        }
+        title="2. Navigate to other nested"
+      />
+      <Button onPress={() => navigation.goBack()} title="5. Go back" />
+    </View>
+  );
+}
+
+const RiveStack = createNativeStackNavigator();
+function RiveNestedStack(): React.JSX.Element {
+  return (
+    <RiveStack.Navigator>
+      <Stack.Screen name="Rive" component={RiveScreen} />
+    </RiveStack.Navigator>
+  );
+}
+
+const Stack = createNativeStackNavigator();
+
+function App(): React.JSX.Element {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="RiveNestedStack" component={RiveNestedStack} />
+        <Stack.Screen name="OtherNestedStack" component={OtherNestedSTack} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
 
 export default App;
